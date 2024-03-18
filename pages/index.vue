@@ -29,6 +29,22 @@ async function handleFileSubmit() {
   uploadedFilePaths.value = data;
 }
 
+async function clearPublicFolder() {
+	btnVal.value = false;
+  try {
+    const response = await fetch("/api/clearFolder", {
+      method: "POST", // or "GET" depending on your server route
+    });
+    if (response.ok) {
+      console.log("Public folder cleared successfully");
+    } else {
+      console.error("Failed to clear public folder");
+    }
+  } catch (error) {
+    console.error("Error clearing public folder:", error);
+  }
+}
+
 function btnValChange() {
   btnVal.value = !btnVal.value;
   // isFileImage.value = null;
@@ -36,6 +52,7 @@ function btnValChange() {
 }
 
 async function handleGetFile() {
+	btnVal.value = false;
   try {
     const response = await fetch(`/api/file?fileId=${fileId.value}`, {
       method: "GET",
@@ -50,6 +67,7 @@ async function handleGetFile() {
         .toLowerCase()
         .substring(filePath.lastIndexOf("."));
       isFileImage.value = imageExtensions.includes(extension);
+	  btnVal.value = true;
       console.log("isFileImage: " + isFileImage);
     } else {
       console.error("Error from handleGetFile:", response.statusText);
@@ -82,10 +100,14 @@ async function handleGetFile() {
       <input type="text" id="fileId" v-model="fileId" />
       <button type="submit">Get File</button>
     </form>
-    <button @click="btnValChange()">
+    <button @click="clearPublicFolder">
+      Clear Everything
+    </button>
+	<button @click="btnValChange">
       <template v-if="btnVal"> ON</template>
       <template v-else> Off</template>
     </button>
+
     <template v-if="btnVal">
       <div v-if="isFileImage !== null">
         <template v-if="isFileImage">
@@ -103,20 +125,14 @@ async function handleGetFile() {
         </template>
       </div>
     </template>
-    <template v-else>
-      <p>Content Hidden</p>
-    </template>
-  </div>
-  <template v-if="isFileImage === false">
-    <div class="contentDiv">
-      <iframe :src="filePath" width="100%" height="800px"></iframe>
-      <!-- <iframe
-        src="https://view.officeapps.live.com/op/embed.aspx?src=filePath"
-        width="1366px"
-        height="623px"
-        frameborder="0">
-	</iframe> -->
-    </div>
+</div>
+<template v-if="btnVal">
+	<p>Content Hidden</p>
+	<template v-if="isFileImage === false">
+		<div class="contentDiv">
+			<iframe :src="filePath" width="100%" height="800px"></iframe>
+		</div>
+	</template>
   </template>
 </template>
 
