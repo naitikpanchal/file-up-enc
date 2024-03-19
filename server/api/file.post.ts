@@ -16,13 +16,6 @@ const encrypt = async (buffer: Buffer | crypto.BinaryLike) => {
     return encrypted;
 }
 
-// const decrypt = (encrypted) => {
-//     const iv = encrypted.slice(0, 16);
-//     encrypted = encrypted.slice(16);
-//     const decipher = crypto.createDecipheriv(algorithm, key, iv);
-//     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-//     return decrypted;
-// }
 
 export default defineEventHandler(async (event) => {
     try {
@@ -72,3 +65,12 @@ export default defineEventHandler(async (event) => {
         )
     }
 })
+
+
+// const decrypt = (encrypted) => {
+//     const iv = encrypted.slice(0, 16);
+//     encrypted = encrypted.slice(16);
+//     const decipher = crypto.createDecipheriv(algorithm, key, iv);
+//     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+//     return decrypted;
+// }

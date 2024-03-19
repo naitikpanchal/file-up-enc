@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
         // Decrypt file data
         const decryptedFile = decrypt(file.fileData);
-
+        console.log("FilePArthj "+filePath.toString());
         // Write decrypted file data to the file
         await fs.writeFile(filePath, decryptedFile);
 

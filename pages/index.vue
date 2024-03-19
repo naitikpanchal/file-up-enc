@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-let files = ref<FileList | null>(null);
+let file1 = ref<FileList | null>(null);
+let file2 = ref<FileList | null>(null); // First file input
+let file3 = ref<FileList | null>(null); // Second file input
 let uploadedFilePaths = ref<string[] | null>(null);
 let downloadedFilePaths = ref<string[] | null>(null);
 let fileData = ref<string | null>(null); // Update type to string|null
@@ -11,14 +13,34 @@ const fileId = ref<string>(""); // Define fileId to store the entered file ID = 
 const imageExtensions = [".png", ".jpg", ".jpeg", ".gif"];
 let btnVal = ref<boolean>(true);
 
-function handleFileChange(e: Event) {
-  files.value = (e.target as HTMLInputElement).files;
-  console.log(files.value);
+function handleFileChange(e: Event, inputName: string) {
+  // files.value = (e.target as HTMLInputElement).files;
+  // console.log(files.value);  
+  if (inputName === 'file1') {
+    file1.value = (e.target as HTMLInputElement).files;
+  } else if (inputName === 'file2') {
+    file2.value = (e.target as HTMLInputElement).files;
+  }
+  else if (inputName === 'file3') {
+    file3.value = (e.target as HTMLInputElement).files;
+  }
 }
 async function handleFileSubmit() {
   const fd = new FormData();
-  if (files.value) {
-    Array.from(files.value).forEach((file, index) => {
+  if (file1.value) {
+    Array.from(file1.value).forEach((file, index) => {
+      fd.append(`index${index}`, file);
+    });
+  }
+
+  if (file2.value) {
+    Array.from(file2.value).forEach((file, index) => {
+      fd.append(`index${index}`, file);
+    });
+  }
+  
+  if (file3.value) {
+    Array.from(file3.value).forEach((file, index) => {
       fd.append(`index${index}`, file);
     });
   }
@@ -67,7 +89,7 @@ async function handleGetFile() {
         .toLowerCase()
         .substring(filePath.lastIndexOf("."));
       isFileImage.value = imageExtensions.includes(extension);
-	  btnVal.value = true;
+      btnVal.value = true;
       console.log("isFileImage: " + isFileImage);
     } else {
       console.error("Error from handleGetFile:", response.statusText);
@@ -85,7 +107,11 @@ async function handleGetFile() {
     <form @submit.prevent="handleFileSubmit" class="formClass">
       <label>Please select the files to upload.</label>
       <br />
-      <input type="file" multiple @change="handleFileChange" />
+      <input type="file" @change="handleFileChange($event, 'file1')" />
+      <br />
+      <input type="file" @change="handleFileChange($event, 'file2')" />
+      <br />
+      <input type="file"@change="handleFileChange($event, 'file3')" />
       <br />
       <button type="submit">Submit</button>
     </form>
